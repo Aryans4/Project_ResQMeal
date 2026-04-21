@@ -8,8 +8,8 @@ export default function DonateMeal({ setPage }) {
     title: "", description: "", location: "", quantity: "", expiryTime: "",
   });
   const [loading, setLoading] = useState(false);
-  const [done,    setDone]    = useState(false);
-  const [error,   setError]   = useState("");
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState("");
 
   // Redirect if not logged in
   if (!user) {
@@ -42,7 +42,7 @@ export default function DonateMeal({ setPage }) {
     setError("");
     setLoading(true);
     try {
-      const res  = await fetch("/api/meals", {
+      const res = await fetch("/api/meals", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader() },
         body: JSON.stringify({ title, description, location, quantity, expiryTime }),
@@ -73,7 +73,7 @@ export default function DonateMeal({ setPage }) {
           </p>
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
             <GreenBtn onClick={() => setPage("Dashboard")}>Go to Dashboard →</GreenBtn>
-            <GreenBtn outline onClick={() => { setDone(false); setForm({ title:"", description:"", location:"", quantity:"", expiryTime:"" }); }}>
+            <GreenBtn outline onClick={() => { setDone(false); setForm({ title: "", description: "", location: "", quantity: "", expiryTime: "" }); }}>
               List Another
             </GreenBtn>
           </div>
