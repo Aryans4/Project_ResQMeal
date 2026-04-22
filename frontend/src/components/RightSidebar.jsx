@@ -1,209 +1,178 @@
 import { useState } from "react";
+import { C, G } from "../shared";
 import { useLang } from "../context/LangContext";
 import { useTheme, ACCENT_PRESETS } from "../context/ThemeContext";
 
 const SECTIONS = [
-  { id: "hero",         iconKey: "sidebar_hero",     icon: "🏠" },
-  { id: "how-it-works", iconKey: "sidebar_how",      icon: "⚙️" },
-  { id: "listings-sec", iconKey: "sidebar_listings",  icon: "🍱" },
-  { id: "why-resqmeal", iconKey: "sidebar_why",       icon: "💡" },
-  { id: "stories",      iconKey: "sidebar_stories",   icon: "💬" },
-  { id: "cta",          iconKey: "sidebar_cta",       icon: "🚀" },
+  { id: "hero",          icon: "🏠", key: "sidebar_hero"     },
+  { id: "how-it-works",  icon: "⚙️", key: "sidebar_how"      },
+  { id: "listings-sec",  icon: "🍱", key: "sidebar_listings" },
+  { id: "why-resqmeal",  icon: "💡", key: "sidebar_why"      },
+  { id: "stories",       icon: "💬", key: "sidebar_stories"  },
+  { id: "cta",           icon: "🚀", key: "sidebar_cta"      },
 ];
 
 export default function RightSidebar({ currentPage }) {
   const { t } = useLang();
-  const { accentIndex, setAccentIndex, accent } = useTheme();
+  const { accentIndex, setAccentIndex, darkMode, setDarkMode } = useTheme();
   const [hovered,     setHovered]     = useState(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [expanded,    setExpanded]    = useState(false);
 
-  const scrollTo = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const showScrollBtns = currentPage === "Home";
+  const scrollTo = (id) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
     <>
-      {/* Sidebar */}
-      <div
-        style={{
-          position: "fixed", right: 0, top: "50%",
-          transform: "translateY(-50%)",
-          zIndex: 1200,
-          display: "flex", flexDirection: "column",
-          alignItems: "flex-end",
-          gap: 4,
-        }}
-        onMouseEnter={() => setExpanded(true)}
-        onMouseLeave={() => { setExpanded(false); setPaletteOpen(false); }}
-      >
-        {/* Main sidebar pill */}
-        <div style={{
-          background: "linear-gradient(180deg, #0d1a10, #080c08)",
-          border: `1px solid ${accent.value}30`,
-          borderRight: "none",
-          borderRadius: "16px 0 0 16px",
-          padding: "12px 8px",
-          display: "flex", flexDirection: "column",
-          alignItems: "center", gap: 4,
-          boxShadow: `-4px 0 30px rgba(0,0,0,0.6), inset 0 0 20px ${accent.value}08`,
-          transition: "all .3s cubic-bezier(.4,0,.2,1)",
-        }}>
-          
-          {/* Section scroll buttons (only on Home) */}
-          {showScrollBtns && SECTIONS.map(sec => (
-            <div key={sec.id} style={{ position: "relative" }}>
-              <button
-                onClick={() => scrollTo(sec.id)}
-                onMouseEnter={() => setHovered(sec.id)}
-                onMouseLeave={() => setHovered(null)}
-                title={t(sec.iconKey)}
-                style={{
-                  width: 40, height: 40, borderRadius: 10,
-                  background: hovered === sec.id ? `${accent.value}20` : "transparent",
-                  border: `1px solid ${hovered === sec.id ? accent.value + "60" : "transparent"}`,
-                  cursor: "pointer", fontSize: 16,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  transition: "all .2s",
-                  transform: hovered === sec.id ? "scale(1.1)" : "scale(1)",
-                  boxShadow: hovered === sec.id ? `0 0 12px ${accent.glow}` : "none",
-                }}
-              >
-                {sec.icon}
-              </button>
+      {/* Backdrop */}
+      {paletteOpen && (
+        <div onClick={() => setPaletteOpen(false)}
+          style={{ position: "fixed", inset: 0, zIndex: 1199 }} />
+      )}
 
-              {/* Tooltip */}
-              {hovered === sec.id && expanded && (
+      {/* Palette + Dark Mode Panel */}
+      {paletteOpen && (
+        <div style={{
+          position: "fixed", right: 60, top: "50%", transform: "translateY(-50%)",
+          zIndex: 1400,
+          background: "var(--nav-bg)", backdropFilter: "blur(20px)",
+          border: "1.5px solid var(--border-sub)", borderRadius: "1.25rem",
+          padding: "16px 14px", boxShadow: "0 20px 60px rgba(0,0,0,0.18)",
+          animation: "slideUp .2s ease", minWidth: 180,
+        }}>
+
+          {/* ── Dark / Light toggle ── */}
+          <div style={{ marginBottom: 12 }}>
+            <p style={{ fontSize: 10, color: "var(--subtle)", fontFamily: G.label, letterSpacing: ".12em", textTransform: "uppercase", margin: "0 0 8px 4px" }}>
+              APPEARANCE
+            </p>
+            <button onClick={() => setDarkMode(!darkMode)}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                width: "100%", padding: "8px 12px", borderRadius: "0.875rem",
+                background: darkMode ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
+                border: "1.5px solid var(--border-sub)", cursor: "pointer",
+              }}>
+              <span style={{ fontSize: 13, fontFamily: G.body, fontWeight: 600, color: "var(--text)", display: "flex", alignItems: "center", gap: 8 }}>
+                {darkMode ? "🌙 Dark" : "☀️ Light"}
+              </span>
+              {/* Toggle pill */}
+              <div style={{
+                width: 40, height: 22, borderRadius: 999,
+                background: darkMode ? "var(--accent)" : "rgba(0,0,0,0.12)",
+                position: "relative", transition: "background .2s",
+                flexShrink: 0,
+              }}>
                 <div style={{
-                  position: "absolute", right: "calc(100% + 10px)", top: "50%",
-                  transform: "translateY(-50%)",
-                  background: "#0d1a10",
-                  border: `1px solid ${accent.value}40`,
-                  borderRadius: 8, padding: "5px 10px",
-                  color: "#e8f5e8", fontSize: 12,
-                  fontFamily: "'Inter', sans-serif", whiteSpace: "nowrap",
-                  boxShadow: `0 4px 20px rgba(0,0,0,0.7)`,
-                  pointerEvents: "none",
-                  animation: "fadeInLeft .15s ease",
-                }}>
-                  {t(sec.iconKey)}
-                </div>
-              )}
-            </div>
-          ))}
+                  position: "absolute", top: 3, left: darkMode ? 21 : 3,
+                  width: 16, height: 16, borderRadius: "50%", background: "#fff",
+                  transition: "left .2s", boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+                }} />
+              </div>
+            </button>
+          </div>
 
           {/* Divider */}
-          <div style={{
-            width: 24, height: 1,
-            background: `${accent.value}30`,
-            margin: "4px 0",
-          }} />
+          <div style={{ height: 1, background: "var(--border-sub)", margin: "4px 0 12px" }} />
 
-          {/* Theme / Color Picker */}
-          <div style={{ position: "relative" }}>
-            <button
-              onClick={() => setPaletteOpen(!paletteOpen)}
-              onMouseEnter={() => setHovered("theme")}
-              onMouseLeave={() => setHovered(null)}
-              title={t("sidebar_theme")}
+          {/* ── Accent colour ── */}
+          <p style={{ fontSize: 10, color: "var(--subtle)", fontFamily: G.label, letterSpacing: ".12em", textTransform: "uppercase", margin: "0 0 8px 4px" }}>
+            ACCENT COLOUR
+          </p>
+          {ACCENT_PRESETS.map((preset, i) => (
+            <button key={preset.name} onClick={() => { setAccentIndex(i); setPaletteOpen(false); }}
               style={{
-                width: 40, height: 40, borderRadius: 10,
-                background: hovered === "theme" ? `${accent.value}20` : "transparent",
-                border: `1px solid ${hovered === "theme" || paletteOpen ? accent.value + "60" : "transparent"}`,
-                cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 10, width: "100%",
+                padding: "7px 10px", borderRadius: "0.75rem", cursor: "pointer",
+                background: i === accentIndex ? `${preset.value}20` : "transparent",
+                border: `1.5px solid ${i === accentIndex ? preset.value + "80" : "transparent"}`,
+                transition: "all .15s",
+              }}
+              onMouseEnter={e => { if (i !== accentIndex) e.currentTarget.style.background = "rgba(128,128,128,0.08)"; }}
+              onMouseLeave={e => { if (i !== accentIndex) e.currentTarget.style.background = "transparent"; }}>
+              <div style={{ width: 18, height: 18, borderRadius: "50%", background: preset.value, flexShrink: 0, boxShadow: i === accentIndex ? `0 0 0 3px ${preset.value}40` : "none" }} />
+              <span style={{ fontSize: 13, color: i === accentIndex ? "var(--text)" : "var(--muted)", fontFamily: G.body, fontWeight: i === accentIndex ? 700 : 500 }}>
+                {preset.name}
+              </span>
+              {i === accentIndex && <span style={{ marginLeft: "auto", color: preset.value, fontSize: 13, fontWeight: 700 }}>✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Sidebar strip */}
+      <div style={{
+        position: "fixed", right: 0, top: "50%", transform: "translateY(-50%)",
+        zIndex: 1200,
+        background: "var(--nav-bg)", backdropFilter: "blur(20px)",
+        border: "1px solid var(--border-sub)", borderRight: "none",
+        borderRadius: "1rem 0 0 1rem", padding: "10px 6px",
+        display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+        boxShadow: "-4px 0 24px rgba(0,0,0,0.1)",
+      }}>
+        {/* Section scroll buttons */}
+        {currentPage === "Home" && SECTIONS.map(sec => (
+          <div key={sec.id} style={{ position: "relative" }}>
+            <button onClick={() => scrollTo(sec.id)}
+              onMouseEnter={() => setHovered(sec.id)}
+              onMouseLeave={() => setHovered(null)}
+              title={t(sec.key)}
+              style={{
+                width: 38, height: 38, borderRadius: "0.75rem", border: "none",
+                background: hovered === sec.id ? "color-mix(in srgb, var(--accent) 15%, transparent)" : "transparent",
+                cursor: "pointer", fontSize: 15,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 transition: "all .2s",
-                boxShadow: paletteOpen ? `0 0 14px ${accent.glow}` : "none",
-              }}
-            >
-              <div style={{
-                width: 20, height: 20, borderRadius: "50%",
-                background: `conic-gradient(from 0deg, #10b981, #06b6d4, #8b5cf6, #f97316, #ec4899, #eab308, #10b981)`,
-                boxShadow: `0 0 8px ${accent.glow}`,
-              }} />
+                transform: hovered === sec.id ? "scale(1.12)" : "scale(1)",
+                opacity: hovered === sec.id ? 1 : 0.65,
+              }}>
+              {sec.icon}
             </button>
-
-            {/* Tooltip */}
-            {hovered === "theme" && expanded && !paletteOpen && (
+            {hovered === sec.id && (
               <div style={{
                 position: "absolute", right: "calc(100% + 10px)", top: "50%",
-                transform: "translateY(-50%)",
-                background: "#0d1a10",
-                border: `1px solid ${accent.value}40`,
-                borderRadius: 8, padding: "5px 10px",
-                color: "#e8f5e8", fontSize: 12,
-                fontFamily: "'Inter', sans-serif", whiteSpace: "nowrap",
-                boxShadow: `0 4px 20px rgba(0,0,0,0.7)`,
-                pointerEvents: "none",
+                transform: "translateY(-50%)", pointerEvents: "none",
+                background: "var(--nav-bg)", backdropFilter: "blur(10px)",
+                border: "1px solid var(--border-sub)", borderRadius: "0.75rem",
+                padding: "5px 12px", color: "var(--text)", fontSize: 12,
+                fontFamily: G.body, fontWeight: 600, whiteSpace: "nowrap",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                animation: "slideUp .15s ease",
               }}>
-                {t("sidebar_theme")}
-              </div>
-            )}
-
-            {/* Color Palette Popup */}
-            {paletteOpen && (
-              <div style={{
-                position: "absolute", right: "calc(100% + 10px)", top: "50%",
-                transform: "translateY(-50%)",
-                background: "linear-gradient(135deg, #0d1a10, #080c08)",
-                border: `1px solid ${accent.value}40`,
-                borderRadius: 14, padding: "12px",
-                boxShadow: `0 0 40px ${accent.glow}, 0 20px 60px rgba(0,0,0,0.8)`,
-                animation: "fadeInLeft .2s ease",
-                display: "flex", flexDirection: "column", gap: 6,
-                minWidth: 160,
-              }}>
-                <p style={{
-                  fontSize: 11, color: "#5a7a5a",
-                  fontFamily: "'Inter', sans-serif",
-                  letterSpacing: ".5px", margin: "0 0 4px",
-                }}>ACCENT COLOUR</p>
-                {ACCENT_PRESETS.map((preset, i) => (
-                  <button
-                    key={preset.name}
-                    onClick={() => { setAccentIndex(i); }}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 10,
-                      padding: "7px 10px", borderRadius: 8,
-                      background: i === accentIndex ? `${preset.value}20` : "transparent",
-                      border: `1px solid ${i === accentIndex ? preset.value + "60" : "transparent"}`,
-                      cursor: "pointer",
-                      transition: "all .15s",
-                    }}
-                    onMouseEnter={e => { if (i !== accentIndex) e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }}
-                    onMouseLeave={e => { if (i !== accentIndex) e.currentTarget.style.background = "transparent"; }}
-                  >
-                    <div style={{
-                      width: 20, height: 20, borderRadius: "50%",
-                      background: preset.value,
-                      boxShadow: i === accentIndex ? `0 0 10px ${preset.glow}` : "none",
-                      flexShrink: 0,
-                    }} />
-                    <span style={{
-                      fontSize: 12, color: i === accentIndex ? preset.value : "#7a9a7a",
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: i === accentIndex ? 600 : 400,
-                    }}>{preset.name}</span>
-                    {i === accentIndex && (
-                      <span style={{ marginLeft: "auto", color: preset.value, fontSize: 11 }}>✓</span>
-                    )}
-                  </button>
-                ))}
+                {t(sec.key)}
               </div>
             )}
           </div>
-        </div>
-      </div>
+        ))}
 
-      <style>{`
-        @keyframes fadeInLeft {
-          from { opacity:0; transform:translateY(-50%) translateX(8px); }
-          to   { opacity:1; transform:translateY(-50%) translateX(0); }
-        }
-      `}</style>
+        <div style={{ width: 22, height: 1, background: "var(--border-sub)", margin: "4px 0" }} />
+
+        {/* Palette + dark mode toggle button */}
+        <button onClick={() => setPaletteOpen(prev => !prev)}
+          title="Theme & colours"
+          style={{
+            width: 38, height: 38, borderRadius: "0.75rem", border: "none",
+            background: paletteOpen ? "rgba(128,128,128,0.1)" : "transparent",
+            cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "all .2s", position: "relative",
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = "rgba(128,128,128,0.1)"}
+          onMouseLeave={e => { if (!paletteOpen) e.currentTarget.style.background = "transparent"; }}>
+          {/* Rainbow colour wheel */}
+          <div style={{
+            width: 22, height: 22, borderRadius: "50%",
+            background: "conic-gradient(from 0deg, #10b981, #06b6d4, #8b5cf6, #f97316, #ec4899, #eab308, #10b981)",
+            boxShadow: paletteOpen ? "0 0 0 3px rgba(128,128,128,0.2)" : "none",
+          }} />
+          {/* Dark mode indicator dot */}
+          {darkMode && (
+            <div style={{
+              position: "absolute", top: 5, right: 5,
+              width: 8, height: 8, borderRadius: "50%",
+              background: "var(--accent)", border: "1.5px solid var(--nav-bg)",
+            }} />
+          )}
+        </button>
+      </div>
     </>
   );
 }

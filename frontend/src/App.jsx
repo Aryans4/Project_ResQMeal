@@ -48,7 +48,7 @@ function AppInner() {
   const showFooter = ["Home", "About"].includes(page);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#060a06", color: "#e8f5e8" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
       <GlobalStyles />
       <Navbar
         page={page}
