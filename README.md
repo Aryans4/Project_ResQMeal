@@ -64,7 +64,6 @@ Project_ResQMeal/
 │   ├── middleware/
 │   ├── models/
 │   ├── routes/
-│   ├── .env
 │   ├── server.js
 │   └── package.json
 │
