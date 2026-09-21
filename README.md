@@ -1,33 +1,78 @@
 # Project ResQMeal 🍱
 
-A MERN-based food rescue platform connecting food donors with NGOs and individuals in need.
+A MERN-based food rescue platform designed to help reduce food waste by connecting available food from PGs and hostels with people and organizations in need.
 
 ## 📌 About
 
-ResQMeal helps reduce food waste by allowing available food from PGs and hostels to be listed so that people or organizations in need can discover and request it.
+ResQMeal provides a platform where available food can be listed with useful information such as:
+
+- PG/Hostel name
+- Location
+- Food expiry time
+- Number of servings available
+- Contact information
+
+The project includes separate frontend and backend applications built using the MERN stack.
 
 ## ✨ Features
 
-- Food listing and availability information
-- PG/Hostel details
-- Location information
-- Food expiry time
-- Available servings
-- Contact option
-- User authentication
-- Food request management
+- 🔐 User authentication
+- 🍱 Food listing and availability
+- 🏠 PG/Hostel information
+- 📍 Location details
+- ⏰ Food expiry information
+- 👥 Available servings
+- 📞 Contact option
+- 📨 Food request management
+- 📱 Responsive frontend
+- 🔗 REST API-based backend
 
 ## 🛠️ Tech Stack
 
+### Frontend
 - React.js
+- JavaScript
+- Vite
+- React Router
+- Lucide React
+
+### Backend
 - Node.js
 - Express.js
-- MongoDB
 - REST APIs
+- JWT Authentication
+- bcryptjs
+- Nodemon
+
+### Database
+- MongoDB
+- Mongoose
+
+### Tools
+- Git
+- GitHub
+- VS Code
+- npm
 
 ## 📁 Project Structure
 
 ```text
 Project_ResQMeal/
+│
+├── backend/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── .env
+│   ├── server.js
+│   └── package.json
+│
 ├── frontend/
-└── backend/
+│   ├── public/
+│   ├── src/
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
+│
+└── .gitignore
